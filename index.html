@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+    <link rel="icon" href="data:,">
+    <script src="https://games.pikabu.ru/sdk/sdk.js"></script>
+    <script src="./pikabu-bridge.js"></script>
+    <script src="./playgama-yandex-shim.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#070a14">
+<title>Небесный шар: повелители неба</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="platform-playgama">
+<canvas id="c"></canvas>
+<div id="grain" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l11.1-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3.2v16H7zM13.8 4H17v16h-3.2z"/></symbol>
+  <symbol id="i-shop" viewBox="0 0 24 24"><path d="M5.5 8h13l1.3 11.1a2 2 0 0 1-2 2.2H6.2a2 2 0 0 1-2-2.2L5.5 8zm2.6-1.2a3.9 3.9 0 0 1 7.8 0V8h-2.1V6.8a1.8 1.8 0 0 0-3.6 0V8H8.1V6.8z"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 3h10v2h3.5v3.2A4.5 4.5 0 0 1 16.6 12a5 5 0 0 1-3.4 2.85V17.4h3.1a1 1 0 0 1 1 1V21H6.7v-2.6a1 1 0 0 1 1-1h3.1v-2.55A5 5 0 0 1 7.4 12 4.5 4.5 0 0 1 3.5 8.2V5H7V3zm0 4H5.4v1.2A2.5 2.5 0 0 0 7 9.9V7zm10 0v2.9a2.5 2.5 0 0 0 1.6-1.7V7H17z"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.2a9.8 9.8 0 1 0 0 19.6 9.8 9.8 0 0 0 0-19.6zM12 5a7.2 7.2 0 1 1 0 14.4A7.2 7.2 0 0 1 12 5zm0 2.7l1.15 3.12 3.32.13-2.62 2.05.91 3.2L12 14.35l-2.76 1.85.91-3.2-2.62-2.05 3.32-.13z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.72 5.86 6.42.76-4.74 4.4 1.26 6.34L12 16.96 6.34 20.16l1.26-6.34-4.74-4.4 6.42-.76z"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 2.5a1.2 1.2 0 0 1 1.2 1.2V4h11.3a1 1 0 0 1 .82 1.57L17.1 9l2.22 3.43A1 1 0 0 1 18.5 14H7.2v7.5H4.8V3.7A1.2 1.2 0 0 1 6 2.5z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.4 4.9L12 10.5l5.6-5.6 1.5 1.5L13.5 12l5.6 5.6-1.5 1.5L12 13.5l-5.6 5.6-1.5-1.5L10.5 12 4.9 6.4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M9.6 16.2L5.4 12l-1.4 1.4 5.6 5.6L20.4 8.2 19 6.8z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M12 2.8A4.2 4.2 0 0 0 7.8 7v2.2H6.6a1.6 1.6 0 0 0-1.6 1.6v8.6a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-8.6a1.6 1.6 0 0 0-1.6-1.6h-1.2V7A4.2 4.2 0 0 0 12 2.8zm0 2.2A2 2 0 0 1 14 7v2.2h-4V7a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4.5h16a2 2 0 0 1 2 2v10.2a2 2 0 0 1-2 2h-6.6v1.3h3.2v1.8H7.4V20h3.2v-1.3H4a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2zM4.2 6.7v9.8h15.6V6.7zM10 8.6l5.2 3-5.2 3z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><path d="M12 2.6A9.4 9.4 0 1 0 21.4 12 9.4 9.4 0 0 0 12 2.6zm6.6 6.2h-2.5a13 13 0 0 0-1.2-3.5 7.4 7.4 0 0 1 3.7 3.5zM12 4.7a11 11 0 0 1 1.6 4.1h-3.2A11 11 0 0 1 12 4.7zM4.8 13.9a7.3 7.3 0 0 1 0-3.8h2.9a15 15 0 0 0 0 3.8zm.8 2.1h2.5a13 13 0 0 0 1.2 3.5A7.4 7.4 0 0 1 5.6 16zm2.5-8H5.6a7.4 7.4 0 0 1 3.7-3.5A13 13 0 0 0 8.1 8.1zM12 19.3a11 11 0 0 1-1.6-4.1h3.2a11 11 0 0 1-1.6 4.1zm2-6.2h-4a13 13 0 0 1 0-3.8h4a13 13 0 0 1 0 3.8zm.7 6a13 13 0 0 0 1.2-3.5h2.5a7.4 7.4 0 0 1-3.7 3.5zm1.6-5.2a15 15 0 0 0 0-3.8h2.9a7.3 7.3 0 0 1 0 3.8z"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11.2 4.2L6.6 8H3.4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.2l4.6 3.8a.8.8 0 0 0 1.3-.62V4.82a.8.8 0 0 0-1.3-.62zM16.1 8.3a1 1 0 0 0-.2 1.4 3.9 3.9 0 0 1 0 4.6 1 1 0 0 0 1.6 1.2 5.9 5.9 0 0 0 0-7 1 1 0 0 0-1.4-.2zm2.9-2.7a1 1 0 0 0-.26 1.4 8.2 8.2 0 0 1 0 10 1 1 0 1 0 1.64 1.14 10.2 10.2 0 0 0 0-12.28 1 1 0 0 0-1.38-.26z"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11.2 4.2L6.6 8H3.4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.2l4.6 3.8a.8.8 0 0 0 1.3-.62V4.82a.8.8 0 0 0-1.3-.62zM21.4 9.5L20 8.1l-2.4 2.4-2.4-2.4-1.4 1.4 2.4 2.4-2.4 2.4 1.4 1.4 2.4-2.4 2.4 2.4 1.4-1.4-2.4-2.4z"/></symbol>
+  <symbol id="i-restart" viewBox="0 0 24 24"><path d="M12 4.6V2.2L8.2 5.4 12 8.6V6.2a5.8 5.8 0 1 1-5.8 5.8H4.6a7.4 7.4 0 1 0 7.4-7.4z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M12 3.1l9 7.6-1.3 1.5-1.1-.9v8.1a1.4 1.4 0 0 1-1.4 1.4h-3.3v-5.4h-3.8v5.4H6.8a1.4 1.4 0 0 1-1.4-1.4v-8.1l-1.1.9L3 10.7z"/></symbol>
+  <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 2.4c-4.7 0-8.5 3.5-8.5 7.9 0 2.6 1.3 4.9 3.4 6.3v2.3a1.5 1.5 0 0 0 1.5 1.5h1.2v-2.1h1.7v2.1h1.4v-2.1h1.7v2.1h1.2a1.5 1.5 0 0 0 1.5-1.5v-2.3c2.1-1.4 3.4-3.7 3.4-6.3 0-4.4-3.8-7.9-8.5-7.9zM8.6 8.9a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2zm6.8 0a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2z"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><path d="M12 5.1a3 3 0 0 0-5.3-1.9 3 3 0 0 0 .9 4.6H4.4a1.4 1.4 0 0 0-1.4 1.4v2.2h8V9.2h2v2.2h8V9.2a1.4 1.4 0 0 0-1.4-1.4h-3.2a3 3 0 0 0 .9-4.6A3 3 0 0 0 12 5.1zm-2.4-.9a1 1 0 0 1 1.4 1.4l-.9 1.2-1.1-1a1 1 0 0 1 .6-1.6zm4.8 0a1 1 0 0 1 .6 1.6l-1.1 1-.9-1.2a1 1 0 0 1 1.4-1.4zM4 13.2h7v8H5.4A1.4 1.4 0 0 1 4 19.8zm9 0h7v6.6a1.4 1.4 0 0 1-1.4 1.4H13z"/></symbol>
+  <symbol id="i-arrows" viewBox="0 0 24 24"><path d="M8.6 6.4L3 12l5.6 5.6 1.5-1.5L7.1 13.2h9.8l-3 2.9 1.5 1.5L21 12l-5.6-5.6-1.5 1.5 3 2.9H7.1l3-2.9z"/></symbol>
+</defs></svg>
+
+<!-- ================= HUD ================= -->
+<div id="hud" class="hidden">
+  <div class="hud-bar">
+    <div class="chip" id="chip-level"><svg class="ic"><use href="#i-flag"/></svg><span id="hud-level">1</span></div>
+    <div class="hud-spacer"></div>
+    <div class="chip chip-num"><svg class="ic ic-star"><use href="#i-star"/></svg><span id="hud-score" class="num">0</span></div>
+    <div class="chip chip-num"><svg class="ic ic-coin"><use href="#i-coin"/></svg><span id="hud-coins" class="num">0</span></div>
+    <button class="icon-btn" id="btn-pause" aria-label="Pause"><svg class="ic"><use href="#i-pause"/></svg></button>
+  </div>
+
+  <div id="boss-hud" class="hidden">
+    <div class="boss-head">
+      <svg class="ic"><use href="#i-skull"/></svg>
+      <span data-i18n="bossName">WARDEN</span>
+      <span class="boss-hp"><span id="boss-hp-cur">0</span>/<span id="boss-hp-max">0</span></span>
+    </div>
+    <div class="boss-track"><div class="boss-fill" id="boss-fill"></div><div class="boss-notches" id="boss-notches"></div></div>
+    <div class="boss-tip" id="boss-tip" data-i18n="bossTip">Ram it!</div>
+  </div>
+
+  <div id="lvl-intro" class="hidden"><span id="intro-kicker"></span><strong id="intro-title"></strong></div>
+  <div id="hint" class="hidden"><svg class="ic"><use href="#i-arrows"/></svg><span id="hint-text"></span></div>
+  <div id="toasts"></div>
+</div>
+
+<!-- ================= LOADING ================= -->
+<div id="scr-load" class="scr">
+  <div class="load-wrap">
+    <div class="load-orb"><i></i><i></i><i></i></div>
+    <h1 class="wordmark">Небесный&nbsp;шар <em>повелители неба</em></h1>
+    <div class="load-bar"><div class="load-fill" id="load-fill"></div></div>
+    <div class="load-pct"><span id="load-pct">0</span>%</div>
+  </div>
+</div>
+
+<!-- ================= MENU ================= -->
+<div id="scr-menu" class="scr hidden">
+  <div class="panel panel-menu">
+    <h1 class="wordmark wordmark-sm">Небесный&nbsp;шар <em>повелители неба</em></h1>
+    <div class="stat-row">
+      <div class="stat"><svg class="ic ic-trophy"><use href="#i-trophy"/></svg><b class="num" id="menu-best">0</b><small data-i18n="best">Best</small></div>
+      <div class="stat"><svg class="ic ic-flag"><use href="#i-flag"/></svg><b class="num" id="menu-level">1</b><small data-i18n="level">Level</small></div>
+      <div class="stat"><svg class="ic ic-coin"><use href="#i-coin"/></svg><b class="num" id="menu-coins">0</b><small data-i18n="coins">Coins</small></div>
+    </div>
+    <button class="btn btn-primary btn-lg" id="btn-play"><svg class="ic"><use href="#i-play"/></svg><span data-i18n="play">Play</span></button>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btn-shop"><svg class="ic"><use href="#i-shop"/></svg><span data-i18n="shop">Skins</span></button>
+    </div>
+    <div class="btn-row btn-row-tight">
+      <button class="icon-btn feat-mute" id="btn-sound" aria-label="Sound"><svg class="ic"><use href="#i-sound"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SHOP ================= -->
+<div id="scr-shop" class="scr hidden" data-modal>
+  <div class="panel panel-wide">
+    <header class="panel-head">
+      <h2 data-i18n="shop">Skins</h2>
+      <div class="wallet"><svg class="ic ic-coin"><use href="#i-coin"/></svg><b class="num" id="shop-coins">0</b></div>
+      <button class="icon-btn icon-btn-sm" id="btn-shop-x" aria-label="Close"><svg class="ic"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="skin-grid" id="skin-grid"></div>
+  </div>
+</div>
+
+<!-- ================= PAUSE ================= -->
+<div id="scr-pause" class="scr hidden" data-modal>
+  <div class="panel">
+    <div class="kicker" data-i18n="paused">Paused</div>
+    <h2 class="panel-title" data-i18n="pausedTitle">Game paused</h2>
+    <p class="panel-sub" data-i18n="pausedSub">Press Resume to get back in</p>
+    <button class="btn btn-primary btn-lg" id="btn-resume"><svg class="ic"><use href="#i-play"/></svg><span data-i18n="resume">Resume</span></button>
+    <button class="btn btn-ghost" id="btn-quit"><svg class="ic"><use href="#i-home"/></svg><span data-i18n="toMenu">Menu</span></button>
+  </div>
+</div>
+
+<!-- ================= GAME OVER ================= -->
+<div id="scr-over" class="scr hidden">
+  <div class="panel">
+    <div class="kicker kicker-bad" data-i18n="gameOver">Dropped</div>
+    <h2 class="panel-title" data-i18n="gameOverTitle">The ball fell</h2>
+    <div class="result-row">
+      <div class="result"><small data-i18n="score">Score</small><b class="num" id="over-score">0</b></div>
+      <div class="result"><small data-i18n="coins">Coins</small><b class="num" id="over-coins">0</b></div>
+    </div>
+    <button class="btn btn-bonus btn-lg feat-vid" id="btn-revive">
+      <span class="vid-tag" data-i18n="vidTag">AD</span>
+      <svg class="ic"><use href="#i-tv"/></svg>
+      <span class="btn-stack">
+        <b data-i18n="vidWatch">Watch an ad</b>
+        <small data-i18n="vidReviveReward">Reward: continue from where you fell</small>
+      </span>
+    </button>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btn-retry"><svg class="ic"><use href="#i-restart"/></svg><span data-i18n="restart">Retry</span></button>
+      <button class="btn btn-ghost" id="btn-over-menu"><svg class="ic"><use href="#i-home"/></svg><span data-i18n="toMenu">Menu</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= WIN ================= -->
+<div id="scr-win" class="scr hidden">
+  <div id="confetti" aria-hidden="true"></div>
+  <div class="panel">
+    <div class="kicker kicker-good" id="win-kicker" data-i18n="levelComplete">Level clear</div>
+    <h2 class="panel-title"><span data-i18n="level">Level</span> <span id="win-level">1</span></h2>
+    <div class="result-row">
+      <div class="result"><small data-i18n="coins">Coins</small><b class="num" id="win-coins">0</b></div>
+      <div class="result"><small data-i18n="bonus">Bonus</small><b class="num" id="win-bonus">0</b></div>
+      <div class="result result-total"><small data-i18n="total">Total</small><b class="num" id="win-total">0</b></div>
+    </div>
+    <button class="btn btn-bonus feat-vid" id="btn-x2">
+      <span class="vid-tag" data-i18n="vidTag">AD</span>
+      <svg class="ic"><use href="#i-tv"/></svg>
+      <span class="btn-stack">
+        <b data-i18n="vidWatch">Watch an ad</b>
+        <small id="x2-prize">Reward: coins ×2, score ×2</small>
+      </span>
+    </button>
+    <button class="btn btn-primary btn-lg" id="btn-next"><svg class="ic"><use href="#i-play"/></svg><span data-i18n="next">Next</span></button>
+  </div>
+</div>
+
+<!-- ============ CONFIRM (rewarded video) ============ -->
+<div id="scr-offer" class="scr hidden" data-modal>
+  <div class="panel">
+    <div class="kicker" data-i18n="vidKicker">Ad for a reward</div>
+    <p class="panel-sub" data-i18n="vidAsk">Watch the video ad to the end and get your reward:</p>
+    <div class="offer-prize" id="offer-prize"></div>
+    <button class="btn btn-bonus btn-lg" id="btn-offer-yes">
+      <span class="vid-tag" data-i18n="vidTag">AD</span>
+      <svg class="ic"><use href="#i-tv"/></svg><span data-i18n="vidWatch">Watch an ad</span>
+    </button>
+    <button class="btn btn-ghost" id="btn-offer-no"><svg class="ic"><use href="#i-close"/></svg><span data-i18n="cancel">Cancel</span></button>
+  </div>
+</div>
+
+<script src="js/platform.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/three.min.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/level.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
